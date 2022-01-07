@@ -114,3 +114,16 @@
     flex-direction: column;
   }
 }
+
+
+.justify_center {
+  justify-content: center;
+}
+
+.btn_with {
+  width: 120px;
+}
+
+.font_time {
+  font-size: 60px;
+}
