@@ -5,3 +5,9 @@ export interface SkillRes {
     updated_at: Date;
     hours_total: number;
 }
+
+export interface SkillPagination {
+    data: SkillRes[];
+    total_data: number;
+    total_pages: number;
+}

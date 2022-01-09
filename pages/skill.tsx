@@ -1,22 +1,29 @@
 import { NextPage } from "next"
 import { useEffect, useState } from "react";
-import { Badge, Button, Modal, ProgressBar } from "react-bootstrap"
+import { Badge, Button, Modal, Pagination, ProgressBar } from "react-bootstrap"
 import HomeCss from '../styles/Home.module.css';
-
 import HeadPage from "../components/head-page"
-import { SkillRes } from "../components/model/skill";
+import Paginations, { PaginationData, paginationDefault, DataOnChangePage, processPages, indexData} from '../components/paginations'
+import { SkillPagination, SkillRes } from "../components/model/skill";
 import dayjs from "dayjs";
-import axios from "axios";
 
-const Skill: NextPage<{props: string, data: Array<SkillRes>}> = ({props, data}) => {
+import { getApiSubjects } from "../service/skill-service"
+
+const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, response }) => {
+    const [dataSkill, setDataSkill] = useState<SkillPagination>(response)
+    const [pagination] = useState<PaginationData>({
+        ...paginationDefault,
+        totalPages: response.total_pages
+    })
+
+    const [active, setActive] = useState<number>(1)
+
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = (id: any) => {
         console.log(id)
         setShow(true);
     }
-
-    console.log(data)
 
     const [time, setTime] = useState<{
         [key: string]: string
@@ -29,7 +36,7 @@ const Skill: NextPage<{props: string, data: Array<SkillRes>}> = ({props, data}) 
     const [isActive, setIsActive] = useState(false);
     const [dateStart, setDateStart] = useState(dayjs());
 
-    function startTimer() {
+    async function startTimer() {
         setIsActive(true);
         setDateStart(dayjs())
     }
@@ -46,7 +53,6 @@ const Skill: NextPage<{props: string, data: Array<SkillRes>}> = ({props, data}) 
 
     useEffect(() => {
         let interval: any = null;
-        console.log(isActive)
         if (isActive == true) {
             interval = setInterval(() => {
 
@@ -81,6 +87,22 @@ const Skill: NextPage<{props: string, data: Array<SkillRes>}> = ({props, data}) 
         })
     }
 
+    function onChangePage(e: DataOnChangePage) {
+        setActive(processPages(e, active, pagination.totalPages))
+    }
+
+
+    useEffect(() => {
+
+        async function apiSubject() {
+            let res: SkillPagination  = await getApiSubjects(active, pagination.size)
+            pagination.totalPages = res.total_pages
+            setDataSkill(res)
+        }
+
+        apiSubject()
+    }, [active, pagination])
+
     return (
         <div>
             <HeadPage name={'Skill'}></HeadPage>
@@ -96,9 +118,9 @@ const Skill: NextPage<{props: string, data: Array<SkillRes>}> = ({props, data}) 
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((res: SkillRes, i: any) => {
-                         return <tr key={res.id}>
-                            <th scope="row">{i+1}</th>
+                    {dataSkill.data.map((res: SkillRes, i: any) => {
+                        return <tr key={res.id}>
+                            <th scope="row">{indexData(i, active, pagination.size)}</th>
                             <td>{res.name}</td>
                             <td>2</td>
                             <td >
@@ -112,7 +134,10 @@ const Skill: NextPage<{props: string, data: Array<SkillRes>}> = ({props, data}) 
                     })}
                 </tbody>
             </table>
+           
+            <Paginations active={active} totalPages={pagination.totalPages} onChangePage={(e) => onChangePage(e)} ></Paginations>
 
+                
             <Modal
                 show={show}
                 onHide={handleClose}
@@ -147,11 +172,13 @@ const Skill: NextPage<{props: string, data: Array<SkillRes>}> = ({props, data}) 
 }
 
 export async function getStaticProps(context: any) {
-    const res = await axios(`${process.env.URL_API_NEXT}/subjects`)
-    const data = await res.data
+    const data = await getApiSubjects(paginationDefault.page, paginationDefault.size)
     return {
-        props: { data }, 
+        props: { response: data },
     }
 }
 
+
+
 export default Skill
+
