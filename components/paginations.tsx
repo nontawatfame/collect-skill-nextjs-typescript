@@ -24,8 +24,13 @@ export interface DataOnChangePage {
     page: number
 }
 
+export interface  ResPagination<T>{
+    data: T[];
+    total_data: number;
+    total_pages: number;
+}
+
 export function processPages(e: DataOnChangePage, active: number, totalPages: number): any {
-    console.log(totalPages)
     if (e.pagination == "item") {
         return e.page
     } else if (e.pagination == "first") {

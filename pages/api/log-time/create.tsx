@@ -11,7 +11,6 @@ export default async function handler(
     res: NextApiResponse<any>
 ) {
 
-     console.log(req.body)
     if (req.method === 'POST') {
         const result = await axios.post(`${process.env.URL_API}/log-time/create`, req.body)
         const data = await result.data

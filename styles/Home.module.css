@@ -139,21 +139,33 @@
   z-index: 4;
   margin-top: 4px;
   margin-left: 10px;
-  background-color: #e3e3e3 !important;
+  background-color: #ffffff !important;
+}
+
+.history_skill_name {
+  margin-top: 4px;
+  margin-left: 10px;
+  background-color: #ffffff !important;
+  color: #000;
 }
 
 .history_skill {
   position: relative;
   z-index: 3;
   margin-top: 4px;
-  margin-left: -10px;
-  padding-left: 17px;
+  margin-left: 0px;
+}
+
+.history_tag_name {
+  margin-top: 4px;
+  margin-left: 20px;
+  background-color: #ffffff !important;
+  color: #000;
 }
 
 .history_tag {
   margin-top: 4px;
-  margin-left: -10px;
-  padding-left: 17px;
+  background-color: #ad7e7e !important;
 }
 
 .history_seconds {

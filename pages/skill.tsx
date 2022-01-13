@@ -3,22 +3,24 @@ import { useEffect, useState } from "react";
 import { Badge, Button, Modal, Pagination, ProgressBar } from "react-bootstrap"
 import HomeCss from '../styles/Home.module.css';
 import HeadPage from "../components/head-page"
-import Paginations, { PaginationData, paginationDefault, DataOnChangePage, processPages, indexData} from '../components/paginations'
-import { SkillPagination, SkillRes } from "../components/model/skill";
+import Paginations, { PaginationData, paginationDefault, DataOnChangePage, processPages, indexData, ResPagination} from '../components/paginations'
+import { SkillRes } from "../components/model/skill";
 import dayjs from "dayjs";
 
 import { getApiSubjects } from "../service/skill-service"
 import { logTimesCreate } from "../service/log-times-service";
 import { LogTime } from "../components/model/logTime";
 
-const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, response }) => {
-    const [dataSkill, setDataSkill] = useState<SkillPagination>(response)
+const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({ props, response }) => {
+    const [dataSkill, setDataSkill] = useState<ResPagination<SkillRes>>(response)
     const [pagination] = useState<PaginationData>({
         ...paginationDefault,
         totalPages: response.total_pages
     })
 
     const [active, setActive] = useState<number>(1)
+
+    const [tag, setTag] = useState<string>("")
 
     const [idSubject, setIdSubject] = useState<number>(0);
     const [show, setShow] = useState(false);
@@ -53,9 +55,6 @@ const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, 
             minutes: "00",
             hours: "00"
         })
-        console.log(dateStart.format("DD/MM/YYYY HH:mm:ss"))
-        console.log(dateEnd.format("DD/MM/YYYY HH:mm:ss"))
-        console.log(idSubject)
 
         let logTimeCreate: LogTime = {
             subjectId: idSubject,
@@ -65,8 +64,10 @@ const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, 
             tagId: null
         }
 
+        console.log(tag)
+
         logTimesCreate(logTimeCreate);
-        
+        setTag("")
     }
 
     useEffect(() => {
@@ -108,7 +109,7 @@ const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, 
     useEffect(() => {
 
         async function apiSubject() {
-            let res: SkillPagination  = await getApiSubjects(active, pagination.size)
+            let res: ResPagination<SkillRes>  = await getApiSubjects(active, pagination.size)
             pagination.totalPages = res.total_pages
             setDataSkill(res)
         }
@@ -167,7 +168,13 @@ const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, 
                 <Modal.Body>
                     <div className="input-group mb-3">
                         <span className="input-group-text" id="basic-addon1">#Tag</span>
-                        <input type="text" className="form-control" disabled={isActive} placeholder="#Tag..." aria-label="Username" aria-describedby="basic-addon1" />
+                        <input 
+                            type="text"
+                            className="form-control" 
+                            value={tag} 
+                            disabled={isActive} 
+                            placeholder="#Tag..." 
+                            onChange={(e) => {setTag(e.target.value)}}/>
                     </div>
 
                     <div className={`text-center`}>
