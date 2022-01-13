@@ -127,3 +127,35 @@
 .font_time {
   font-size: 60px;
 }
+
+.history_day {
+  position: relative;
+  z-index: 5;
+  margin-top: 3px;
+}
+
+.history_time {
+  position: relative;
+  z-index: 4;
+  margin-top: 4px;
+  margin-left: 10px;
+  background-color: #e3e3e3 !important;
+}
+
+.history_skill {
+  position: relative;
+  z-index: 3;
+  margin-top: 4px;
+  margin-left: -10px;
+  padding-left: 17px;
+}
+
+.history_tag {
+  margin-top: 4px;
+  margin-left: -10px;
+  padding-left: 17px;
+}
+
+.history_seconds {
+  color: #0ecc63;
+}

@@ -50,7 +50,6 @@ export function indexData(index: number, page: number, size: number): number {
 }
 
 const Paginations: NextPage<Props> = (props) => {
-    console.log(props)
     let items = [];
     for (let number = 1; number <= props.totalPages; number++) {
         items.push(

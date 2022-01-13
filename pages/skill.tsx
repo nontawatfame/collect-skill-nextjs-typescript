@@ -8,6 +8,8 @@ import { SkillPagination, SkillRes } from "../components/model/skill";
 import dayjs from "dayjs";
 
 import { getApiSubjects } from "../service/skill-service"
+import { logTimesCreate } from "../service/log-times-service";
+import { LogTime } from "../components/model/logTime";
 
 const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, response }) => {
     const [dataSkill, setDataSkill] = useState<SkillPagination>(response)
@@ -18,10 +20,11 @@ const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, 
 
     const [active, setActive] = useState<number>(1)
 
+    const [idSubject, setIdSubject] = useState<number>(0);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = (id: any) => {
-        console.log(id)
+        setIdSubject(id)
         setShow(true);
     }
 
@@ -35,6 +38,7 @@ const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, 
 
     const [isActive, setIsActive] = useState(false);
     const [dateStart, setDateStart] = useState(dayjs());
+    const [dateEnd, setDateEnd] = useState(dayjs());
 
     async function startTimer() {
         setIsActive(true);
@@ -49,19 +53,28 @@ const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, 
             minutes: "00",
             hours: "00"
         })
+        console.log(dateStart.format("DD/MM/YYYY HH:mm:ss"))
+        console.log(dateEnd.format("DD/MM/YYYY HH:mm:ss"))
+        console.log(idSubject)
+
+        let logTimeCreate: LogTime = {
+            subjectId: idSubject,
+            timeStart: dateStart.toDate(),
+            timeEnd: dateEnd.toDate(),
+            totalSeconds: dateEnd.diff(dateStart, "seconds"),
+            tagId: null
+        }
+
+        logTimesCreate(logTimeCreate);
+        
     }
 
     useEffect(() => {
         let interval: any = null;
         if (isActive == true) {
             interval = setInterval(() => {
-
-                console.log(dateStart.format("DD/MM/YYYY HH:mm:ss"))
-                console.log(dayjs().format("DD/MM/YYYY HH:mm:ss"))
-
+                setDateEnd(dayjs())
                 secondsToHms(dayjs().diff(dateStart, "seconds"))
-
-
             }, 1000);
         } else if (isActive == false) {
             clearInterval(interval);
@@ -162,7 +175,7 @@ const Skill: NextPage<{ props: string, response: SkillPagination }> = ({ props, 
                     </div>
                 </Modal.Body>
                 <Modal.Footer className={HomeCss.justify_center}>
-                    <Button variant={(isActive == true) ? "danger" : "success"} className={HomeCss.btn_with} onClick={(isActive == true) ? stopTimer : startTimer}>
+                    <Button variant={(isActive == true) ? "danger" : "success"} className={HomeCss.btn_with} onClick={(isActive == true) ? handleClose : startTimer}>
                         {(isActive == true) ? "Stop" : "Start"}
                     </Button>
                 </Modal.Footer>
