@@ -8,9 +8,9 @@ export default async function handler(
     res: NextApiResponse<any>
 ) {
     console.log(req.query)
-    console.log("idee")
+    console.log("id")
     if (req.method === 'GET') {
-        const result = await axios.get(`${process.env.URL_API}/subject/get-subjects/${req.query.slug[0]}/${req.query.slug[1]}`)
+        const result = await axios.get(`${process.env.URL_API}/subject/get-subjects/${req.query.id}`)
         const data = await result.data
         res.status(200).json(data)
     } else {

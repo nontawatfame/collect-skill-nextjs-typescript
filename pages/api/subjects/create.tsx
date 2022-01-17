@@ -7,10 +7,8 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
 ) {
-    console.log(req.query)
-    console.log("idee")
-    if (req.method === 'GET') {
-        const result = await axios.get(`${process.env.URL_API}/subject/get-subjects/${req.query.slug[0]}/${req.query.slug[1]}`)
+    if (req.method === 'POST') {
+        const result = await axios.post(`${process.env.URL_API}/subject/create`, {name: req.body.name})
         const data = await result.data
         res.status(200).json(data)
     } else {

@@ -14,6 +14,8 @@ const History: NextPage<{ props: any, response: ResPagination<LogTimeModel> }> =
         totalPages: response.total_pages
     })
 
+    console.log(dataTime)
+
     const [active, setActive] = useState<number>(1)
 
     function onChangePage(e: DataOnChangePage) {
@@ -26,7 +28,7 @@ const History: NextPage<{ props: any, response: ResPagination<LogTimeModel> }> =
 
     useEffect(() => {
         async function apiTime() {
-            let res: ResPagination<LogTimeModel>  = await logTimesService.getLogTimes(active, pagination.size)
+            let res: ResPagination<LogTimeModel>  = await logTimesService.getLogTimes(active, pagination.size, dayjs().format("YYYY-MM-DD"), dayjs().format("YYYY-MM-DD"))
             pagination.totalPages = res.total_pages
             setDataTime(res)
         }
@@ -59,13 +61,16 @@ const History: NextPage<{ props: any, response: ResPagination<LogTimeModel> }> =
                 })}
             </ul>
 
-            <Paginations active={active} totalPages={pagination.totalPages} onChangePage={(e) => onChangePage(e)} ></Paginations>
+            {(dataTime.total_data != 0)
+                ? <Paginations active={active} totalPages={pagination.totalPages} onChangePage={(e) => onChangePage(e)} ></Paginations>
+                : ""
+            }    
         </div>
     )
 }
 
 export async function getStaticProps(context: any) {
-    const data = await logTimesService.getLogTimes(paginationDefault.page, paginationDefault.size)
+    const data = await logTimesService.getLogTimes(paginationDefault.page, paginationDefault.size, dayjs().format("YYYY-MM-DD"), dayjs().format("YYYY-MM-DD"))
     return {
         props: { response: data },
     }

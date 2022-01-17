@@ -7,8 +7,8 @@ export async function logTimesCreate(logtime: LogTime) {
     return data
 }
 
-export async function getLogTimes(page: number, size: number) {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_URL_API_NEXT}/log-time/${page}/${size}`)
+export async function getLogTimes(page: number, size: number, startDate: string, endDate: string) {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_URL_API_NEXT}/log-time/${page}/${size}/${startDate}/${endDate}`)
     const data = await res.data
     return data
 }
