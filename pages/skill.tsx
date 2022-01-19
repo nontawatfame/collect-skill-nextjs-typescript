@@ -156,7 +156,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     function onChangePage(e: DataOnChangePage) {
         setActive(processPages(e, active, pagination.totalPages))
     }
-sdf
 
     useEffect(() => {
         console.log("apiSubject")
