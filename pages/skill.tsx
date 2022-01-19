@@ -4,7 +4,7 @@ import { Badge, Button, Modal, Pagination, ProgressBar } from "react-bootstrap"
 import HomeCss from '../styles/Home.module.css';
 import HeadPage from "../components/head-page"
 import Paginations, { PaginationData, paginationDefault, DataOnChangePage, processPages, indexData, ResPagination } from '../components/paginations'
-import { SkillRes } from "../components/model/skill";
+import { ResLog, SkillRes } from "../components/model/skill";
 import dayjs from "dayjs";
 
 import * as skillService from "../service/skill-service"
@@ -19,10 +19,8 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
         totalPages: response.total_pages
     })
     const router = useRouter()
-    console.log(router.query.user)
     let user = router.query.user
 
-    console.log(pagination)
 
     const [active, setActive] = useState<number>(1)
 
@@ -62,7 +60,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     const handleShowAdd = async (isEdit: boolean, id: number = 0) => {
         if (isEdit == true) {
             const res = await skillService.getSubjectById(id)
-            console.log(res)
             setSubjectName(res[0].name)
         } else {
             setSubjectName("")
@@ -78,12 +75,17 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
 
     const [isEdit, setIsEdit] = useState(true);
 
+    const [resLogData, setResLogData] = useState<ResLog>({
+        status: "",
+        data: []
+    });
+
     async function startTimer() {
         setIsActive(true);
         setDateStart(dayjs())
     }
 
-    function stopTimer() {
+    async function stopTimer() {
         handleClose()
         setIsActive(false);
         setTime({
@@ -101,11 +103,26 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
         }
         console.log(tag)
 
-        logTimesCreate(logTimeCreate);
+        let data: ResLog = await logTimesCreate(logTimeCreate);
+        
+        setTimeout(() => {
+            let skill = dataSkill
+            skill.data = skill.data.map((value : SkillRes) => {
+                if (value.id == data.data[0].id) {
+                    return data.data[0]
+                }
+                return value
+            })
+            let resSkill = {...skill}
+            setDataSkill(resSkill)
+        }, 700);
+      
+
         setTag("")
     }
 
     useEffect(() => {
+        console.log("interval")
         let interval: any = null;
         if (isActive == true) {
             interval = setInterval(() => {
@@ -142,6 +159,7 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
 
 
     useEffect(() => {
+        console.log("apiSubject")
         async function apiSubject() {
             let res: ResPagination<SkillRes> = await skillService.getApiSubjects(active, pagination.size)
             pagination.totalPages = res.total_pages
@@ -159,7 +177,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     }, [active, pagination, isUpdate])
 
     async function deleteSubject() {
-        console.log(idSubject)
         const res = await skillService.deleteById(idSubject)
         if (res.status == 200) {
             handleCloseDelete()
@@ -168,8 +185,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     }
 
     async function saveSubject() {
-        console.log("save")
-        console.log(subjectName)
         const res = await skillService.create(subjectName)
         if (res.status == 200) {
             handleCloseAdd()
@@ -179,13 +194,16 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     }
 
     async function updateSubject() {
-        console.log(idSubject)
         const res = await skillService.updateById(idSubject, subjectName)
         if (res.status == 200) {
             handleCloseAdd()
             setIsUpdate(true);
             setSubjectName("")
         }
+    }
+
+    function number2decimals(number: number): number {
+        return parseFloat(number.toFixed(2));
     }
 
 
@@ -202,12 +220,12 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
             <table className="table table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">name</th>
-                        <th scope="col">lavel</th>
-                        <th scope="col" className="text-center">exp</th>
-                        <th scope="col" className="text-center">hours</th>
-                        <th scope="col" className="text-end">action</th>
+                        <th scope="col" style={{width: "5%"}}>No.</th>
+                        <th scope="col" style={{width: "10%"}}>name</th>
+                        <th scope="col" style={{width: "10%"}}>lavel</th>
+                        <th scope="col" style={{width: "10%"}} className="text-center">exp</th>
+                        <th scope="col" style={{width: "10%"}} className="text-center">hours</th>
+                        <th scope="col" style={{width: "20%"}} className="text-end">action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -215,15 +233,16 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
                         return <tr key={res.id}>
                             <th scope="row">{indexData(i, active, pagination.size)}</th>
                             <td>{res.name}</td>
-                            <td>2</td>
+                            <td>{res.level}</td>
                             <td >
                                 <div className="mt-2">
-                                    <ProgressBar animated now={60} label={`${60}%`} />
+                                    <ProgressBar animated now={number2decimals(((res.seconds_total - (res.exp_next - 36000)) / 36000) * 100)} label={`${number2decimals(((res.seconds_total - (res.exp_next - 36000)) / 36000) * 100)}%`} />
+                                    <label htmlFor="" style={{fontSize: "11px"}}>exp : ({res.seconds_total})</label>
                                 </div>
                             </td>
                             <td className="text-center">
                                 <div style={{marginTop: '3px'}}>
-                                    <Badge bg="primary">{res.hours_total} hours</Badge>
+                                    <Badge bg="primary">{Math.floor(number2decimals(res.seconds_total / 3600))} hours</Badge>
                                 </div>
                             </td>
                             <td className="text-end">

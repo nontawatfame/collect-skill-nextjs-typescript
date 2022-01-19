@@ -3,5 +3,12 @@ export interface SkillRes {
     name: string;
     created_at: Date;
     updated_at: Date;
-    hours_total: number;
+    seconds_total: number;
+    exp_next: number;
+    level: number;
+}
+
+export interface ResLog {
+    status: string;
+    data: SkillRes[];
 }
