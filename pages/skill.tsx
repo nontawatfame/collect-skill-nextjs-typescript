@@ -16,6 +16,10 @@ import { useRouter } from "next/router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Toast from "../components/toast";
 import { TagModel } from "../components/model/tag";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal)
 
 const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({ props, response }) => {
     const [dataSkill, setDataSkill] = useState<ResPagination<SkillRes>>(response)
@@ -145,17 +149,17 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
             }
             const res = await logTimesCreate(logTimeCreate);
             let data: ResLog = await res.data
+           
             setTimeout(() => {
-                let skill = dataSkill
-                skill.data = skill.data.map((value: SkillRes) => {
-                    if (value.id == data.data[0].id) {
-                        return data.data[0]
-                    }
-                    return value
-                })
-                let resSkill = { ...skill }
-                setDataSkill(resSkill)
-            }, 700);
+                if (data.status == "U") {
+                    MySwal.fire({
+                        icon: 'success',
+                        title: <strong>Good job!</strong>,
+                        text: `Level UP ${data.data[0].level}`
+                      })
+                }
+                setIsUpdate(true)
+            }, 600);
         }
         setTag("")
     }
@@ -167,7 +171,9 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
             setTagList(data)
         }
 
-        subjectId()     
+        if (show == true) {
+            subjectId()  
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [show])
 
@@ -322,9 +328,9 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
                 <thead>
                     <tr>
                         <th scope="col" style={{ width: "5%" }}>No.</th>
-                        <th scope="col" style={{ width: "2%" }}>name</th>
+                        <th scope="col" style={{ width: "5%" }}>name</th>
                         <th scope="col" style={{ width: "5%" }} className="text-center">lavel</th>
-                        <th scope="col" style={{ width: "10%" }} className="text-center">exp</th>
+                        <th scope="col" style={{ width: "13%" }} className="text-center">exp</th>
                         <th scope="col" style={{ width: "10%" }} className="text-center">hours</th>
                         <th scope="col" style={{ width: "20%" }} className="text-end">action</th>
                     </tr>
@@ -512,7 +518,7 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
 
 export async function getStaticProps(context: any) {
     const res = await skillService.getApiSubjects(paginationDefault.page, paginationDefault.size)
-    const data = res.data
+    const data = await res.data
     return {
         props: { response: data },
     }

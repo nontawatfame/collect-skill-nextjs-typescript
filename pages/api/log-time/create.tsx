@@ -15,8 +15,8 @@ export default async function handler(
         const result = await axios.post(`${process.env.URL_API}/log-time/create`, req.body)
             .then((reso: AxiosResponse<any, any>) => reso)
             .catch((reso: AxiosResponse<any, any>) => reso)
-        if (result.status == 200) {
-            res.status(200).json(result.data)
+        if (result.status == 201) {
+            res.status(201).json(await result.data)
             return false
         }
         res.status(200).json(result)
