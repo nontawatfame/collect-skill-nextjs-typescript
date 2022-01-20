@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 
 export default async function handler(
@@ -12,8 +12,13 @@ export default async function handler(
         let startDate: any = req.query.slug[2]
         let endDate: any = req.query.slug[3]
         const result = await axios.get(`${process.env.URL_API}/log-time/get-log-times/${page}/${size}/${startDate}/${endDate}`)
-        const data = await result.data
-        res.status(200).json(data)
+            .then((reso: AxiosResponse<any, any>) => reso)
+            .catch((reso: AxiosResponse<any, any>) => reso)
+        if (result.status == 200) {
+            res.status(200).json(result.data)
+            return false
+        }
+        res.status(200).json(result)
     } else {
         res.status(405).json({ error: 'Method Not Allowed' })
     }

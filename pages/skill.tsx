@@ -66,7 +66,8 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     const handleShowAdd = async (isEdit: boolean, id: number = 0) => {
         if (isEdit == true) {
             const res = await skillService.getSubjectById(id)
-            setSubjectName(res[0].name)
+            const data = await res.data
+            setSubjectName(data[0].name)
         } else {
             setSubjectName("")
         }
@@ -98,6 +99,16 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
         if (tagNameAdd == "") {
             Toast.fire({icon: 'error',title: "required field tag name"})
             return false
+        }
+
+        const resTag = await tagService.checkTagName(tagNameAdd, idSubject, 0)
+        const dataTag : Array<TagModel> = await resTag.data
+
+        if (dataTag.length > 0) {
+            if (dataTag[0].name == tagNameAdd) {
+                Toast.fire({icon: 'error',title: "duplicate name"})
+                return false 
+            }
         }
 
         let res = await tagService.create(tagNameAdd, idSubject);
@@ -137,7 +148,8 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
             }
             console.log(tag)
 
-            let data: ResLog = await logTimesCreate(logTimeCreate);
+            const res = await logTimesCreate(logTimeCreate);
+            let data: ResLog = await res.data
 
             setTimeout(() => {
                 let skill = dataSkill
@@ -205,12 +217,13 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     useEffect(() => {
         console.log("apiSubject")
         async function apiSubject() {
-            let res: ResPagination<SkillRes> = await skillService.getApiSubjects(active, pagination.size)
-            pagination.totalPages = res.total_pages
-            if (res.data.length == 0) {
+            let res = await skillService.getApiSubjects(active, pagination.size)
+            let data: ResPagination<SkillRes> = res.data
+            pagination.totalPages = data.total_pages
+            if (data.data.length == 0) {
                 setActive(processPages({ pagination: "prev", page: 0 }, active, pagination.totalPages))
             }
-            setDataSkill(res)
+            setDataSkill(data)
         }
 
         apiSubject()
@@ -238,6 +251,16 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
             return false
         }
 
+        const resSubjectName = await skillService.checkSubjectName(subjectName, 0);
+        const dataSubjectName : Array<SkillRes> = await resSubjectName.data
+        
+        if (dataSubjectName.length > 0) {
+            if (dataSubjectName[0].name == subjectName) {
+                Toast.fire({icon: 'error',title: "duplicate name"})
+                return false 
+            }
+        }
+        
         const res = await skillService.create(subjectName)
         const data = await res.data
         if (res.status == 201) {
@@ -254,6 +277,16 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
         if (subjectName == "") {
             Toast.fire({icon: 'error',title: "required field subject name"})
             return false
+        }
+
+        const resSubjectName = await skillService.checkSubjectName(subjectName, idSubject);
+        const dataSubjectName : Array<SkillRes> = await resSubjectName.data
+        
+        if (dataSubjectName.length > 0) {
+            if (dataSubjectName[0].name == subjectName) {
+                Toast.fire({icon: 'error',title: "duplicate name"})
+                return false 
+            }
         }
 
         const res = await skillService.updateById(idSubject, subjectName)
@@ -488,7 +521,8 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
 }
 
 export async function getStaticProps(context: any) {
-    const data = await skillService.getApiSubjects(paginationDefault.page, paginationDefault.size)
+    const res = await skillService.getApiSubjects(paginationDefault.page, paginationDefault.size)
+    const data = res.data
     return {
         props: { response: data },
     }

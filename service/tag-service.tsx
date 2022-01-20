@@ -13,3 +13,10 @@ export async function subjectId(subjectId: number) {
         .catch((res: AxiosResponse<any, any>) => res)
     return res
 }
+
+export async function checkTagName(tagName: string, idSubject: number, tagId: number) {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_URL_API_NEXT}/tag/check-name/${tagName}/${idSubject}/${tagId}`)
+        .then((res: AxiosResponse<any, any>) => res)
+        .catch((res: AxiosResponse<any, any>) => res)
+    return res
+}

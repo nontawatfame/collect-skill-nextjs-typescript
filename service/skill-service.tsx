@@ -2,8 +2,9 @@ import axios, { AxiosResponse } from "axios"
 
 export async function getApiSubjects(pages: number, size: number) {
     const res = await axios(`${process.env.NEXT_PUBLIC_URL_API_NEXT}/subjects/${pages}/${size}`)
-    const data = await res.data
-    return data
+        .then((res: AxiosResponse<any, any>) => res)
+        .catch((res: AxiosResponse<any, any>) => res)
+    return res
 }
 
 export async function create(name: string) {
@@ -29,6 +30,14 @@ export async function updateById(id: number, name: string) {
 
 export async function getSubjectById(id: number) {
     const res = await axios.get(`${process.env.NEXT_PUBLIC_URL_API_NEXT}/subjects/get-id/${id}`)
-    const data = await res.data
-    return data
+        .then((res: AxiosResponse<any, any>) => res)
+        .catch((res: AxiosResponse<any, any>) => res)
+    return res
+}
+
+export async function checkSubjectName(name: string, id: number) {
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_URL_API_NEXT}/subjects/check-name/${name}/${id}`)
+        .then((res: AxiosResponse<any, any>) => res)
+        .catch((res: AxiosResponse<any, any>) => res)
+    return res
 }

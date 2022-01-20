@@ -8,13 +8,16 @@ export default async function handler(
     res: NextApiResponse<any>
 ) {
     if (req.method === 'GET') {
-        const result = await axios.get(`${process.env.URL_API}/subject/get-subjects`)
+        console.log("req.query")
+        console.log(req.query)
+        const result = await axios.get(`${process.env.URL_API}/subject/check-subject-name/${req.query.slug[0]}/${req.query.slug[1]}`)
             .then((reso: AxiosResponse<any, any>) => reso)
             .catch((reso: AxiosResponse<any, any>) => reso)
         if (result.status == 200) {
             res.status(200).json(result.data)
             return false
         }
+
         res.status(200).json(result)
     } else {
         res.status(405).json({ error: 'Method Not Allowed' })
