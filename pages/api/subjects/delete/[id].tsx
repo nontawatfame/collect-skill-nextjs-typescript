@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 
 export default async function handler(
@@ -10,8 +10,13 @@ export default async function handler(
     console.log(req.query)
     if (req.method === 'DELETE') {
         const result = await axios.delete(`${process.env.URL_API}/subject/delete/${req.query.id}`)
-        const data = await result.data
-        res.status(200).json(data)
+            .then((reso: AxiosResponse<any, any>) => reso)
+            .catch((reso: AxiosResponse<any, any>) => reso)
+        if (result.status == 200) {
+            res.status(200).json(result.data)
+            return false
+        }
+        res.status(200).json(result)
     } else {
         res.status(405).json({ error: 'Method Not Allowed' })
     }

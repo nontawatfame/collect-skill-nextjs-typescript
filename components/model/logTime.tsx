@@ -1,6 +1,6 @@
 export interface LogTime {
     subjectId: number,
-    tagId: number | null,
+    tagId: string | null,
     timeStart: Date,
     timeEnd: Date,
     totalSeconds: number

@@ -7,16 +7,18 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
 ) {
-    console.log(req.query)
-    if (req.method === 'PUT') {
-        const result = await axios.put(`${process.env.URL_API}/subject/update/${req.query.id}`, { name: req.body.name })
+    if (req.method === 'GET') {
+        const result = await axios.get(`${process.env.URL_API}/tag/get-tags-subject-id/${req.query.subject_id}`)
             .then((reso: AxiosResponse<any, any>) => reso)
             .catch((reso: AxiosResponse<any, any>) => reso)
+
         if (result.status == 200) {
             res.status(200).json(result.data)
             return false
         }
+
         res.status(200).json(result)
+        
     } else {
         res.status(405).json({ error: 'Method Not Allowed' })
     }
