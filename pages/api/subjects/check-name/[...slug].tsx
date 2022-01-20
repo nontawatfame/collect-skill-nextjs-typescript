@@ -8,8 +8,6 @@ export default async function handler(
     res: NextApiResponse<any>
 ) {
     if (req.method === 'GET') {
-        console.log("req.query")
-        console.log(req.query)
         const result = await axios.get(`${process.env.URL_API}/subject/check-subject-name/${req.query.slug[0]}/${req.query.slug[1]}`)
             .then((reso: AxiosResponse<any, any>) => reso)
             .catch((reso: AxiosResponse<any, any>) => reso)

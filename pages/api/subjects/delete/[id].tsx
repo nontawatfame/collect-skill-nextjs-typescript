@@ -7,7 +7,6 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
 ) {
-    console.log(req.query)
     if (req.method === 'DELETE') {
         const result = await axios.delete(`${process.env.URL_API}/subject/delete/${req.query.id}`)
             .then((reso: AxiosResponse<any, any>) => reso)

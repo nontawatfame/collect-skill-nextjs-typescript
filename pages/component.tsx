@@ -41,35 +41,21 @@ const Home: NextPage = ({ props }: any) => {
       minutes : "00",
       hours : "00"
     })
-
     let endDate = dayjs()
-    console.log("test: ")
-    console.log(endDate)
-
     arrayDate.push({
       dateStart: dateStart,
       dateEnd: endDate
     })
-
-
-    console.log(arrayDate)
   }
 
  
 
   useEffect(() => {
     let interval: any = null;
-    console.log(isActive)
     if (isActive == true) {
       interval = setInterval(() => {
         setSeconds(seconds => seconds + 1);
-
-        console.log(dateStart.format("DD/MM/YYYY HH:mm:ss"))
-        console.log(dayjs().format("DD/MM/YYYY HH:mm:ss"))
-        
         secondsToHms(dayjs().diff(dateStart, "seconds"))
-
-      
       }, 1000);
     } else if (isActive == false) {
       clearInterval(interval);

@@ -95,7 +95,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     }
 
     async function saveTag() {
-        console.log(tagNameAdd)
         if (tagNameAdd == "") {
             Toast.fire({icon: 'error',title: "required field tag name"})
             return false
@@ -127,10 +126,8 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     }
 
     async function stopTimer() {
-
         let isStartTimer = isActive;
         setIsActive(false);
-        console.log("stopTimer")
         handleClose()
         setTime({
             seconds: "00",
@@ -146,11 +143,8 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
                 totalSeconds: Math.sign(dateEnd.diff(dateStart, "seconds")) == -1 ? 0 : dateEnd.diff(dateStart, "seconds"),
                 tagId: (tag == "") ? null : tag
             }
-            console.log(tag)
-
             const res = await logTimesCreate(logTimeCreate);
             let data: ResLog = await res.data
-
             setTimeout(() => {
                 let skill = dataSkill
                 skill.data = skill.data.map((value: SkillRes) => {
@@ -163,7 +157,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
                 setDataSkill(resSkill)
             }, 700);
         }
-
         setTag("")
     }
 
@@ -179,7 +172,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     }, [show])
 
     useEffect(() => {
-        console.log("interval")
         let interval: any = null;
         if (isActive == true) {
             interval = setInterval(() => {
@@ -215,7 +207,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     }
 
     useEffect(() => {
-        console.log("apiSubject")
         async function apiSubject() {
             let res = await skillService.getApiSubjects(active, pagination.size)
             let data: ResPagination<SkillRes> = res.data
@@ -291,7 +282,6 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
 
         const res = await skillService.updateById(idSubject, subjectName)
         const data = await res.data
-        console.log(data)
         if (res.status == 200) {
             Toast.fire({icon: 'success', title: data.message})
             handleCloseAdd()

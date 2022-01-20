@@ -13,9 +13,6 @@ const History: NextPage<{ props: any, response: ResPagination<LogTimeModel> }> =
         ...paginationDefault,
         totalPages: response.total_pages
     })
-
-    console.log(dataTime)
-
     const [active, setActive] = useState<number>(1)
 
     function onChangePage(e: DataOnChangePage) {
