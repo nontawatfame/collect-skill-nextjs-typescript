@@ -59,6 +59,13 @@ const History: NextPage<{ props: any, response: ResPagination<LogTimeModel> }> =
                 })}
             </ul>
 
+            {(dataTime.total_data == 0)
+                ? <div className="text-center">
+                    <h6>no data found</h6>
+                </div>
+                : ""
+            }
+
             {(dataTime.total_data != 0)
                 ? <Paginations active={active} totalPages={pagination.totalPages} onChangePage={(e) => onChangePage(e)} ></Paginations>
                 : ""
