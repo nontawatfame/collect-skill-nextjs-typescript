@@ -38,6 +38,11 @@ const Navbar: NextPage = ({ props }: any) => {
                                     <a className={"nav-link " + checkActive("/history")}>History</a>
                                 </Link>
                             </li>
+                            <li className="nav-item">
+                                <Link href="/summary">
+                                    <a className={"nav-link " + checkActive("/summary")}>Summary</a>
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </div>
