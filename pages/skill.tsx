@@ -25,7 +25,7 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     const [dataSkill, setDataSkill] = useState<ResPagination<SkillRes>>(response)
     const [pagination] = useState<PaginationData>({
         ...paginationDefault,
-        totalPages: response.total_pages
+        totalPages: (response == null)? 0 : response.total_pages
     })
     const router = useRouter()
     let user = router.query.user
@@ -336,7 +336,7 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
                     </tr>
                 </thead>
                 <tbody>
-                    {dataSkill.data.map((res: SkillRes, i: any) => {
+                    {dataSkill?.data.map((res: SkillRes, i: any) => {
                         return <tr key={res.id} style={{ verticalAlign: "middle" }}>
                             <th scope="row">{indexData(i, active, pagination.size)}</th>
                             <td>{res.name}</td>
@@ -373,14 +373,14 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
                 </tbody>
             </table>
 
-            {(dataSkill.total_data == 0)
+            {(dataSkill?.total_data == 0)
                 ? <div className="text-center">
                     <h6>no data found</h6>
                 </div>
                 : ""
             }
 
-            {(dataSkill.total_data != 0)
+            {(dataSkill?.total_data != 0)
                 ? <Paginations active={active} totalPages={pagination.totalPages} onChangePage={(e) => onChangePage(e)} ></Paginations> : ""
             }
 
@@ -519,8 +519,10 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
 export async function getStaticProps(context: any) {
     const res = await skillService.getApiSubjects(paginationDefault.page, paginationDefault.size)
     const data = await res.data
+
+    
     return {
-        props: { response: data },
+        props: { response: data || null},
     }
 }
 

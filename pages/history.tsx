@@ -11,7 +11,7 @@ const History: NextPage<{ props: any, response: ResPagination<LogTimeModel> }> =
     const [dataTime, setDataTime] = useState<ResPagination<LogTimeModel>>(response)
     const [pagination] = useState<PaginationData>({
         ...paginationDefault,
-        totalPages: response.total_pages
+        totalPages: (response == null) ? 0 :response.total_pages
     })
     const [active, setActive] = useState<number>(1)
 
@@ -38,7 +38,7 @@ const History: NextPage<{ props: any, response: ResPagination<LogTimeModel> }> =
         <div>
             <HeadPage name={'History'}></HeadPage>
             <ul className="list-group mt-4 mb-3">
-                {dataTime.data.map((res: LogTimeModel) => {
+                {dataTime?.data.map((res: LogTimeModel) => {
                     return <li className="list-group-item" key={res.id}>
                         <div className="d-flex flex-row justify-content-between">
                             <div className="d-flex flex-row">
@@ -59,14 +59,14 @@ const History: NextPage<{ props: any, response: ResPagination<LogTimeModel> }> =
                 })}
             </ul>
 
-            {(dataTime.total_data == 0)
+            {(dataTime?.total_data == 0)
                 ? <div className="text-center">
                     <h6>no data found</h6>
                 </div>
                 : ""
             }
 
-            {(dataTime.total_data != 0)
+            {(dataTime?.total_data != 0)
                 ? <Paginations active={active} totalPages={pagination.totalPages} onChangePage={(e) => onChangePage(e)} ></Paginations>
                 : ""
             }    
@@ -78,7 +78,7 @@ export async function getStaticProps(context: any) {
     const res = await logTimesService.getLogTimes(paginationDefault.page, paginationDefault.size, dayjs().format("YYYY-MM-DD"), dayjs().format("YYYY-MM-DD"))
     const data = await res.data
     return {
-        props: { response: data },
+        props: { response: data || null },
     }
 }
 
