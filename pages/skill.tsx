@@ -30,6 +30,7 @@ const Skill: NextPage<{ props: string, response: ResPagination<SkillRes> }> = ({
     const router = useRouter()
     let user = router.query.user
 
+    console.log(process.env.NEXT_PUBLIC_URL_API_NEXT)
 
     const [active, setActive] = useState<number>(1)
 
